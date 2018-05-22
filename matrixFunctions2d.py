@@ -11,9 +11,9 @@ def normalize2dMatrix(matrix, k=0): #if k = 1, normalize along rows instead of c
    for i in range(n):
       for j in range(n):
          if(k==0):
-            sum[i] += Norm[i,j]#Columns
+            sum[i] += Norm[j,i]#Columns
          else:
-            sum[i] += Norm[j,i] #rows
+            sum[i] += Norm[i,j] #rows
 #divide by sum
    for i in range(n):
       for j in range(n):
@@ -62,9 +62,9 @@ def diagonalAdjustment2d(matrix, k=0):
    for i in range(n):
       matrix[i,i] = 0
       if(k==0):
-         sum[i] = np.sum(matrix[i,:])
-      else:
          sum[i] = np.sum(matrix[:,i])
+      else:
+         sum[i] = np.sum(matrix[i,:])
       matrix[i,i] = -1 * sum[i]
 
    return matrix
@@ -118,16 +118,41 @@ def printDetailedBalanceftxt(matrix, fname):
    fname2 = fname
    n = matrix.shape[0]
    i=1
+   kb = 0.00198
+   t = 300
+   kbt = kb * t
    while(os.path.isfile(fname2)):
       fname2 = fname + "." + str(i)
+      i+=1
    ftxt = open(fname2, "w+")
    f = np.zeros(n)
    for i in range(n-1):
-      f[i] = matrix[i+1,i] / matrix[i,i+1]
-   sumd = np.sum(f)
-   f = f/sumd
-   f = -0.6 * np.real(sp.log(f))
+#      print i, matrix[i+1,i], matrix[i,i+1]
+      f[i] += f[i-1] + kbt * np.log(abs(matrix[i+1,i] / matrix[i,i+1]))
+#      print f[i]
+#   sumd = np.sum(f)
+#   f = f/sumd
+#   for i in range(n-1):
+#      f[i] = f[i-1] - 0.6 * np.real(sp.log(f[i]))
+   j=-2
    for i in range(n-1):
-      ftxt.write("%s\n"%f[i])
+      j+=4.0/n
+      ftxt.write("%s %s\n"%(j,f[i]))
+   ftxt.close()
+   return fname2
+
+
+def write2dMatrix(matrix, fname):
+   fname2 = fname
+   n = matrix.shape[0]
+   i=1
+   while(os.path.isfile(fname2)):
+      fname2= fname+ "." + str(i)
+      i+=1
+   ftxt = open(fname2, "w+")
+   for i in range(n):
+      for j in range(n):
+         ftxt.write("%s "%matrix[i,j])
+      ftxt.write("\n")
    ftxt.close()
    return fname2
