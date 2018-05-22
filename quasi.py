@@ -59,13 +59,22 @@ Unsort = np.zeros((n,n))
 #creating an NxN matrix which will allow the original matrix to be unsorted at the end
 #print Sort[0,:]
 #print Norm[0,:]
-for i in range(n):
-   for j in range(n):
-      k=0
-      while(Unsort[i,j]==0):
-         if((Sort[i,k]==Norm[i,j])):
-            Unsort[i,j] = k+1
-         k+=1
+if(k==1):
+   for i in range(n):
+      for j in range(n):
+         f=0
+         while(Unsort[i,j]==0):
+            if((Sort[i,f]==Norm[i,j])):
+               Unsort[i,j] = f+1
+            f+=1
+else:
+   for i in range(n):
+      for j in range(n):
+         f=0
+         while(Unsort[j,i]==0):
+            if((Sort[f,i]==Norm[j,i])):
+               Unsort[j,i] = f+1
+            f+=1
 
 
 
@@ -96,8 +105,8 @@ for i in range(n):
       m[i], S[i] = findMValue(Sort[:,i])
    else:
       m[i], S[i] = findMValue(Sort[i,:])
-#print S
-#print m
+print S
+print m
 
 
 #calc lambdas
@@ -122,9 +131,9 @@ for i in range(n):
    if not(m[i] == 1):
       if(k==1):
          l[i] = (1.0-S[i])/m[i] - Sort[i,m[i]]
-      else:
+      if(k==0):
          l[i] = (1.0-S[i])/m[i] - Sort[m[i],i]
-#   print "l: ", l[i], Sort[i,m[i]]
+
 for i in range(n):
    if(k==1):
       for j in range(n):
@@ -136,12 +145,12 @@ for i in range(n):
             Sort[i,j] = Sort[i,j] + l[i]
    else:
       for j in range(n):
-         if(j>m_):
+         if(j>m[i]):
             Sort[j,i] = 0
          elif(j==0):
-            Sort[j,i] = Sort[j,i] + l[j]
+            Sort[j,i] = Sort[j,i] + l[i]
          else:
-            Sort[j,i] = Sort[j,i] + l[j]
+            Sort[j,i] = Sort[j,i] + l[i]
 
 
 
@@ -151,10 +160,14 @@ for i in range(n):
 
 
 final = np.zeros((n,n))
-for i in range(n):
-   for j in range(n):
-      final[i,j] = Sort[i,Unsort[i,j]-1]
-
+if(k==1):
+   for i in range(n):
+      for j in range(n):
+         final[i,j] = Sort[i,Unsort[i,j]-1]
+else:
+   for i in range(n):
+      for j in range(n):
+         final[j,i] = Sort[Unsort[j,i]-1,i]
 #print
 #print
 #matrixFunctions2d.print2dMatrix(Unsort)
@@ -162,6 +175,3 @@ for i in range(n):
 #print
 #matrixFunctions2d.print2dMatrix(final)
 matrixFunctions2d.write2dMatrix(final, sys.argv[2])
-
-matrixFunctions2d.printDetailedBalanceftxt(final, "f.txt.quasi")
-
