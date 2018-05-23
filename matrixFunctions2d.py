@@ -109,7 +109,7 @@ def print2dMatrix(matrix):
    n = matrix.shape[0]
    for i in range(n):
       for j in range(n):
-         print "%s" %matrix[i,j],
+         print "%10s " %matrix[i,j],
       print "\n",
 
 
@@ -137,7 +137,7 @@ def printDetailedBalanceftxt(matrix, fname):
    j=-2
    for i in range(n-1):
       j+=4.0/n
-      ftxt.write("%s %s\n"%(j,f[i]))
+      ftxt.write("%10s %10s\n"%(j,f[i]))
    ftxt.close()
    return fname2
 
@@ -152,7 +152,7 @@ def write2dMatrix(matrix, fname):
    ftxt = open(fname2, "w+")
    for i in range(n):
       for j in range(n):
-         ftxt.write("%s "%matrix[i,j])
+         ftxt.write("%10s "%matrix[i,j])
       ftxt.write("\n")
    ftxt.close()
    return fname2
