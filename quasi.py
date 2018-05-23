@@ -37,13 +37,13 @@ else:
    print "Currently Configured to sum along the ROW"
 
 
-Norm = matrixFunctions2d.normalize2dMatrix(N, k)
+#Norm = matrixFunctions2d.normalize2dMatrix(N, k)               #####Apparently Tuenter does not normalize first.
 #matrixFunctions2d.print2dMatrix(Norm)
 n = N.shape[0]
 #print
 #now we solve n reduced optimization problems
 
-Sort = np.copy(Norm)
+Sort = np.copy(N)                                               #####
 Sort = Sort * -1#opposite of ascending sort is a
 for i in range(n):#descending sort
    if(k==1):
@@ -64,7 +64,7 @@ if(k==1):
       for j in range(n):
          f=0
          while(Unsort[i,j]==0):
-            if((Sort[i,f]==Norm[i,j])):
+            if((Sort[i,f]==N[i,j])):                         ####
                Unsort[i,j] = f+1
             f+=1
 else:
@@ -72,7 +72,7 @@ else:
       for j in range(n):
          f=0
          while(Unsort[j,i]==0):
-            if((Sort[f,i]==Norm[j,i])):
+            if((Sort[f,i]==N[j,i])):                         ###########
                Unsort[j,i] = f+1
             f+=1
 
@@ -85,6 +85,7 @@ def findMValue(array):
    m=1
    n = len(array)
    S=0
+   sprev = 0
 #   print array
    for i in range(n):
       if(i==0):
@@ -95,8 +96,11 @@ def findMValue(array):
 #         quit()
          if(S>=1):
             m = i
-            return m, S
-   return m, 0
+            return m, sprev
+         else:
+            m=i
+            sprev = S
+   return 1, 0
 
 m = np.zeros(n)
 S = np.zeros(n)
@@ -130,14 +134,14 @@ l = np.zeros(n)
 for i in range(n):
    if not(m[i] == 1):
       if(k==1):
-         l[i] = (1.0-S[i])/m[i] - Sort[i,m[i]]
+         l[i] = (1.0-S[i])/m[i] - Sort[i,int(m[i])-1]
       if(k==0):
-         l[i] = (1.0-S[i])/m[i] - Sort[m[i],i]
+         l[i] = (1.0-S[i])/m[i] - Sort[int(m[i])-1,i]
 
 for i in range(n):
    if(k==1):
       for j in range(n):
-         if(j>m[i]):
+         if(j>m[i]-1):
             Sort[i,j] = 0
          elif(j==0):
             Sort[i,j] = Sort[i,j] + l[i]
@@ -145,7 +149,7 @@ for i in range(n):
             Sort[i,j] = Sort[i,j] + l[i]
    else:
       for j in range(n):
-         if(j>m[i]):
+         if(j>m[i]-1):
             Sort[j,i] = 0
          elif(j==0):
             Sort[j,i] = Sort[j,i] + l[i]
@@ -163,11 +167,11 @@ final = np.zeros((n,n))
 if(k==1):
    for i in range(n):
       for j in range(n):
-         final[i,j] = Sort[i,Unsort[i,j]-1]
+         final[i,j] = Sort[i,int(Unsort[i,j])-1]
 else:
    for i in range(n):
       for j in range(n):
-         final[j,i] = Sort[Unsort[j,i]-1,i]
+         final[j,i] = Sort[int(Unsort[j,i])-1,i]
 #print
 #print
 #matrixFunctions2d.print2dMatrix(Unsort)
