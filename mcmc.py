@@ -10,10 +10,10 @@ startN = matrixFunctions2d.normalize2dMatrix(start, 1) #Normalize along row
 
 startL = logm(startN)
 startW = matrixFunctions2d.weightedAdjustment2d(startL, 1)# along row
-#matrixFunctions2d.print2dMatrix(expm(startN))
+#matrixFunctions2d.print2dMatrix((startW))
 #quit()
 t=0
-k=100
+k=1000
 r=0
 #dA = 0
 #dB = 0
@@ -24,58 +24,44 @@ alpha[:,:] = 1
 beta[:] = 1
 alpha0 = np.copy(alpha)
 beta0 = np.copy(beta)
-pQ = MCMCHelper.posteriorQ(startN, startN, alpha, beta)
-Q = np.copy(startN)
-while(t<1000):
+Q = MCMCHelper.makeNewQ(alpha, alpha, beta, alpha)#generates a random Q
+#matrixFunctions2d.print2dMatrix(Q)
+while(t<10000):
    q = np.copy(Q)
-   accept=0
-   states = np.arange(n)
-#   matrixFunctions2d.print2dMatrix(start)
-#   quit()
-#   startL = logm(start)
-#   startW = matrixFunctions2d.weightedAdjustment2d(startL, 1)
+   states = np.zeros(3*n)
+   for i in range(n):
+      states[3*i] = i
+      states[3*i+1] = i
+      states[3*i+2] = i
 
-
-   while(accept==0):
-      markovChain = np.zeros((n,k))
-      for i in range(n):
-         markovChain[i,0] = states[i]
-         p=0
-         while(p<k-1):
-            markovChain[i,p+1] = MCMCHelper.takeStep(q, int(markovChain[i,p]), 2)
-            p+=1
-
-      startM = MCMCHelper.makeNewNMatrix(markovChain) #returns a unNormalized Matrix
-      startN = matrixFunctions2d.normalize2dMatrix(startM)
-      Q = MCMCHelper.makeNewQ(startN, alpha0, beta0)
-      pQtest = MCMCHelper.posteriorQ(Q, startN, alpha0, beta0)
-      if(pQtest>pQ):
-         alpha = alpha0
-         beta = beta0
-         accept = 1
-         r=0
-         print "Accept ", r, pQtest, pQ
-         pQ = pQtest
-      else:
-         for i in range(n):
-            beta0[i] = abs(beta0[i] + random.random()-0.5)
-            for j in range(n):
-               alpha0[i,j] = abs(alpha0[i,j] + random.random()-0.5)
-         accept = 0
-         r+=1 #convergenace criteria
-         print "Reject ", r, pQtest, pQ
-         if(r>5):#converged
-            print t, "Converged"
-            matrixFunctions2d.print2dMatrix(q)
-            matrixFunctions2d.printDetailedBalanceftxt(q, "converged.txt")
-            quit()
-
-
-   printstring = "data/cycle." + str(t) + ".txt"
-   matrixFunctions2d.write2dMatrix(q, printstring)
-
+   #sample
+   markovChain = np.zeros((3*n,k))
+   deltaT = 20 
+   for state in states:
+      markovChain[state,0] = state
+      p=0
+      while(p<k-1):
+         markovChain[state, p+1] = MCMCHelper.takeStep(q, int(markovChain[state,p]), deltaT)
+#         print markovChain[state,p], markovChain[state,p+1]
+         rando = random.random()
+         s1 = int(markovChain[state,p])
+         s2 = int(markovChain[state,p+1])
+         compare = -1.0 * startW[s2,s1] / startW[s1,s1]
+#         if(abs(s1-s2)==1):
+#            print s1, s2, rando, compare, p
+         if(rando < compare or s1==s2):
+            p+=1 
+            if(p%100==0):
+               print p, state
+#               print markovChain[state, :p]
    t+=1
-   print r, printstring, pQ
+#   print r, printstring, pQ
+   print t
+
+   startM = MCMCHelper.makeNewNMatrix(markovChain)
+   startN = matrixFunctions2d.normalize2dMatrix(startM, 1)
+   Q = MCMCHelper.makeNewQ(startN, alpha0, beta0, start)#currently start doesn't matter
+
 
    matrixFunctions2d.printDetailedBalanceftxt(q, "worked.txt")
 

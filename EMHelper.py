@@ -19,6 +19,10 @@ def integrand(s, Q, i, j):
 def calcF_1_2(Q, i, j):
    n = Q.shape[0]
    result, _ = integrate.quad(integrand, 0, 1, args=(Q,i,j))
+#   result = integrate.romberg(integrand, 0, 1, args=(Q,i,j))
+
+#   result, _ = integrate.quad(integrand, -1, 0, args=(Q,i,j))
+#   return -1.0 * result
    return result
 
 def expectation(Q,i,j):

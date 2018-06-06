@@ -7,7 +7,11 @@ from scipy.linalg import logm, expm
 #quite simple, read in a matrix, normalize it, take the log and set it as Qo
 input = matrixFunctions2d.read2dMatrix(sys.argv[1])
 Norm = matrixFunctions2d.normalize2dMatrix(input, 0)#currently works along rows, as does this whole algorithm
+
+
 logd = logm(Norm)
+#logd = logm(input)
+
 diag = matrixFunctions2d.diagonalAdjustment2d(logd)
 #matrixFunctions2d.print2dMatrix(diag)
 #print
@@ -26,4 +30,6 @@ while(exit==0):
 
 
 #matrixFunctions2d.print2dMatrix(diag)
+#Norm = matrixFunctions2d.normalize2dMatrix(diag,1)
+#matrixFunctions2d.printDetailedBalanceftxt(Norm, "db.txt")
 matrixFunctions2d.printDetailedBalanceftxt(diag, "db.txt")

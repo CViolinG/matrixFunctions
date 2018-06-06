@@ -10,7 +10,7 @@ diag = np.zeros(n)
 for i in range(n):
    j+=4.0/24
    diag[i] =  np.log(matrix[i,i])
-   print j, diag[i]
+   print j, -1.0 * diag[i]
 
 #for i in range(11):
 #   print diag[i] - diag[n-i-1]
