@@ -32,4 +32,5 @@ while(exit==0):
 #matrixFunctions2d.print2dMatrix(diag)
 #Norm = matrixFunctions2d.normalize2dMatrix(diag,1)
 #matrixFunctions2d.printDetailedBalanceftxt(Norm, "db.txt")
-matrixFunctions2d.printDetailedBalanceftxt(diag, "db.txt")
+matrixFunctions2d.write2dMatrix(diag, "EM_Matrix_%s.dat"%sys.argv[1])
+matrixFunctions2d.printDetailedBalanceftxt(diag, "EM_db_%s.dat"%sys.argv[1])

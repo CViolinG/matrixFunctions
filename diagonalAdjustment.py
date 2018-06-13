@@ -45,10 +45,12 @@ else:
 Norm = matrixFunctions2d.normalize2dMatrix(matrix, k)
 #print Norm
 logd = logm(Norm)
+print logd 
 diag = matrixFunctions2d.diagonalAdjustment2d(logd)
 
 #print free energy to f.txt
-matrixFunctions2d.printDetailedBalanceftxt(diag, "f.txt.diagonal")
+matrixFunctions2d.printDetailedBalanceftxt(diag, "diagonal_db_%s.dat"%sys.argv[1])
+matrixFunctions2d.write2dMatrix(diag, "diagonal_Matrix_%s.dat"%sys.argv[1])
 #detailed balance
 
 #matrixFunctions2d.print2dMatrix(diag)

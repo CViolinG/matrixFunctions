@@ -1,0 +1,113 @@
+#!/usr/bin/python
+#Perform Weighted Adjust or Diagonal Adjust
+#for i/j in 1...K do
+#if i!=j
+#qij = arg min(qij[0,c]) || exp(Q(qij)) - P || for some c
+#return Q
+
+import numpy as np
+import matrixFunctions2d
+from scipy.linalg import expm, logm
+from scipy import optimize
+import sys
+c=1
+calculations = 0
+def distance(q1, q2):#find the distance between the two matrices
+   n = q1.shape[0]
+   dist = 0.0
+   for i in range(n):
+      for j in range(n):
+#         print i, j, q1[i,j], q2[i,j]
+         dist += (q1[i,j] - q2[i,j])**2
+   return np.sqrt(dist)
+
+def evaluateHops(hops, i, j, Q):
+   P = expm(Q)
+   n = Q.shape[0]
+   copy = np.copy(Q)
+   evaluations = np.zeros(n)
+   for k in range(n):
+      diff = Q[i,j] - hops[k]
+      for u in range(n):
+         if(u!=j):
+            copy[i,u] += diff
+
+      copy[i,i] = -1 * (np.sum(copy[i,:]) - copy[i,i]) #set diagonal to neg sum
+      evaluations[k] = distance(copy, P) #evaluate distance
+   return evaluations
+def buildHops(n, x, y):
+   ar = np.zeros(n)
+   step = float((x - y)/n)
+   for i in range(n):
+      ar[i] = ar[i-1] + step
+   return ar
+def argmin(i, j, Q, c, epsilon = 0.000000001, maxIters=50):
+   value = 1
+   n = Q.shape[0]
+   tempAr = np.copy(Q[i,:])
+   x = 0#min
+   y = c#max
+   iters = 0
+   switch = 0
+   while(value>epsilon):
+      hops = buildHops(n, x, y)
+      evals = evaluateHops(hops, i, j, Q)
+      index = np.argmin(evals)
+      if(evals[(index+1)%n]>evals[(index-1)%n]):
+          value = evals[(index-1)%n] - evals[index]
+          x = hops[index]
+          y = hops[(index-1)%n]
+          if(switch==1):
+             y = z
+             switch = 0
+          else:
+             z = hops[index+1]
+             switch = 1
+      else:
+          value = evals[(index+1)%n] - evals[index]
+          x = hops[index]
+          y = hops[(index+1)%n]
+          if(switch==-1):
+             y = z
+             switch = 0 
+          else:
+             z = hops[index-1]
+             switch = -1
+      if(iters>maxIters):
+         value =0
+      iters +=1
+      print index, value, iters, x, y
+
+   return hops[index] 
+
+mat = matrixFunctions2d.read2dMatrix(sys.argv[1])
+norm = matrixFunctions2d.normalize2dMatrix(mat, 1)#along row
+log = logm(norm)
+Q = matrixFunctions2d.diagonalAdjustment2d(log)    #this is our Qnaught
+#Q = matrixFunctions2d.weightedAdjustment2d(log)
+def func(x, i, j, Q):
+   P = expm(Q)
+   n = Q.shape[0]
+   copy = np.copy(Q)
+   for k in range(n):
+      diff = Q[i,j] - x#initially zero for first iteration, should change as x changes
+      for u in range(n):
+         if(u!=j):
+            copy[i,u] += float(diff/n)
+
+      copy[i,i] = -1 * (np.sum(copy[i,:]) - copy[i,i]) #set diagonal to neg sum
+   return distance(copy, Q) 
+
+n = norm.shape[0]
+q = np.copy(Q) 
+for i in range(n):
+   for j in range(n):
+      if(i!=j):
+         calculations+=1
+         print calculations
+         q[i,j] = optimize.fmin(func, Q[i,j], args=(i,j,Q))#argmin(i, j, Q, c)
+         print q[i,j]
+         Q = np.copy(q) #put updated matrix in place of Q
+
+matrixFunctions2d.printDetailedBalanceftxt(np.transpose(Q), "componentwise_%s.dat"%sys.argv[1])
+

@@ -12,6 +12,6 @@ logd = logm(Norm)
 
 #mat = expm(matrix)
 #matrixFunctions2d.printDetailedBalanceftxt(mat, "quickout.txt")
-matrixFunctions2d.printDetailedBalanceftxt(logd, "quickout.txt")
+matrixFunctions2d.printDetailedBalanceftxt(logd, "detailedBalance_%s.dat"%sys.argv[1])
 #matrixFunctions2d.printDetailedBalanceftxt(matrix, "quickout.txt")
 

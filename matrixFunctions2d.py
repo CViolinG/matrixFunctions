@@ -109,12 +109,12 @@ def print2dMatrix(matrix):
    n = matrix.shape[0]
    for i in range(n):
       for j in range(n):
-         print "%23s " %matrix[i,j],
+         print "%8s " %matrix[i,j],
       print "\n",
 
 
 
-def printDetailedBalanceftxt(matrix, fname):
+def printDetailedBalanceftxt(matrix, fname, additionalComments=''):
    fname2 = fname
    n = matrix.shape[0]
    i=1
@@ -125,16 +125,27 @@ def printDetailedBalanceftxt(matrix, fname):
       fname2 = fname + "." + str(i)
       i+=1
    ftxt = open(fname2, "w+")
+   ftxt.write("\"%s\""%fname2)
    f = np.zeros(n)
    for i in range(n-1):
 #      print i, matrix[i+1,i], matrix[i,i+1]
-      f[i] += f[i-1] + kbt * np.log(abs(matrix[i+1,i] / matrix[i,i+1]))
+      if(matrix[i+1,i] == 0 or matrix[i,i+1]==0):
+         f[i] = 0
+      else:
+         f[i] += f[i-1] + kbt * np.log(abs(matrix[i+1,i] / matrix[i,i+1]))
 #      print f[i]
 #   sumd = np.sum(f)
 #   f = f/sumd
 #   for i in range(n-1):
 #      f[i] = f[i-1] - 0.6 * np.real(sp.log(f[i]))
    j=-2
+   miin = np.min(f)
+   ftxt.write("#Adjusted by min of: %s"%miin)
+   ftxt.write("#%s"%additionalComments)
+   if(miin<0):
+      f += miin
+   else:
+      f -= miin
    for i in range(n-1):
       j+=4.0/n
       ftxt.write("%23s %23s\n"%(j,f[i]))

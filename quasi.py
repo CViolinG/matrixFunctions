@@ -178,4 +178,6 @@ else:
 #print
 #print
 #matrixFunctions2d.print2dMatrix(final)
-matrixFunctions2d.write2dMatrix(final, sys.argv[2])
+matrixFunctions2d.printDetailedBalanceftxt(final, "QOG_DB_%s.dat"%sys.argv[1])
+
+matrixFunctions2d.write2dMatrix(final, "QOG_mat_%s.dat"%sys.argv[1])

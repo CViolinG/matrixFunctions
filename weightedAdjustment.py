@@ -48,7 +48,7 @@ adjusted = matrixFunctions2d.weightedAdjustment2d(log, k)
 
 exp = expm(adjusted)
 
-matrixFunctions2d.printDetailedBalanceftxt(exp, "f.txt.weighted")
-
+matrixFunctions2d.printDetailedBalanceftxt(adjusted, "weighted_db_%s.dat"%sys.argv[1])
+matrixFunctions2d.write2dMatrix(adjusted, "weighted_Matrix_%s.dat"%sys.argv[1])
 
 #matrixFunctions2d.print2dMatrix(adjusted)
