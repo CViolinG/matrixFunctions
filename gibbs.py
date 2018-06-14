@@ -7,27 +7,11 @@ from scipy.linalg import logm, expm
 import random
 import sys
 import math
-
-#def gammaFunction(R, N, alpha=1, beta=1):
-#   x = random.random()
-#   beta = (beta + R)**-1
-#   alpha = alpha + N
-#
-#   if(beta<=0 or alpha <1):
-#      print "invalid value found in gamma function"
-#      quit()
-#
-#   t1 = beta ** alpha
-#   t2 = x ** (alpha - 1)
-#   t3 = np.exp(-1.0 * beta * x)
-#   t4 = math.factorial(int(alpha - 1))
-#
-#   return t1 * t2 * t3 / t4
-
+import EMHelper
 def gammaFunction(R, N, alpha=1, beta=1):
    beta += R
    beta = 1 / beta
-   alpha += N 
+   alpha += N
    return np.random.gamma(alpha, beta, 1)
 
 
@@ -39,12 +23,48 @@ distribution = matrixFunctions2d.normalize2dMatrix(MATRIX,0)#normalize along row
 n = MATRIX.shape[0]
 #make random initial generator matrix
 Q = np.zeros_like(MATRIX)
+
+#generate alpha matrix using an EM, set alpha[i,j] = 1 if EM[i,j]>1e-14 else alpha[i,j]=0
+#code from expectationMaximization.py
+logd = logm(distribution)
+diag = matrixFunctions2d.diagonalAdjustment2d(logd)
+epsilon = 0.0001
+i=0
+maxIters=200
+exit=0
+maxiters=200
+while(exit==0):
+   diag, dist, exit = EMHelper.nextTimeStep(diag, epsilon)
+   i+=1
+   print i, dist
+   if(i==maxIters):
+      print "Maximum Iterations Reached: %s"%i
+      print "Exiting EM Portion of sampler"
+      exit=1
+########### copied code end ##########
+alpha = np.zeros((n,n))
 for i in range(n):
    for j in range(n):
-      Q[i,j] = gammaFunction(0,0)
+      if(diag[i,j]<0.00000000000001):
+         alpha[i,j] = 0
+      else:
+         alpha[i,j] = 1
 
+val = 0.00000000000000001
+print "Alpha"
+for i in range(n):
+   for j in range(n):
+      if(j!=i):
+         Q[i,j] = gammaFunction(val,val, alpha[i,j])
+      print alpha[i,j],
+   print "Q"
+for i in range(n):#set diagonals
+   Q[i,i] = -1 * np.sum(Q[i,:]) - Q[i,i]
+   for j in range(n):
+      print Q[i,j],
+   print
 #Gibbs Sampler with metropolis-hastings to create draws
-nGibbs = 4 
+nGibbs = int(sys.argv[2]) 
 totalIters = nGibbs
 xval = 4
 niters = 1000
@@ -67,9 +87,9 @@ while(nGibbs>0):
 
 
 
-   matrixFunctions2d.write2dMatrix(N, "gibbs_matrix_%s_%s.txt"%(sys.argv[1], totalIters-nGibbs))
-   matrixFunctions2d.printDetailedBalanceftxt(N, "gibbs_db_%s_%s.txt"%(sys.argv[1], totalIters-nGibbs))
-   counts = metropolis.countSamples(samples, n)
-   metropolis.printCounts(fname, totalCount, accepted, n, counts, xval)
+   matrixFunctions2d.write2dMatrix(N, "gibbs_matrix_%s_%s.dat"%(sys.argv[1], totalIters-nGibbs))
+   matrixFunctions2d.printDetailedBalanceftxt(N, "gibbs_db_%s_%s.dat"%(sys.argv[1], totalIters-nGibbs), "Number of Iterations : %s\n"%sys.argv[2])
+#   counts = metropolis.countSamples(samples, n)
+#   metropolis.printCounts(fname, totalCount, accepted, n, counts, xval)
    
 

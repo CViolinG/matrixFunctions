@@ -12,7 +12,12 @@ def makeOneHotVector(i, n):
 def integrand(s, Q, i, j):
    n = Q.shape[0]
    pro1 = np.matmul(expm((1-s)*Q), makeOneHotVector(i,n))
-   pro2 = np.matmul(np.transpose(makeOneHotVector(j,n)),expm(s*Q))
+   #print pro1, makeOneHotVector(i,n)
+   pro2 = np.matmul(expm(s*Q),np.transpose(makeOneHotVector(i,n)))
+#   pro2 = np.matmul(np.transpose(makeOneHotVector(i,n)),expm(s*Q))
+   
+   #print pro2, makeOneHotVector(j,n)
+   #print np.matmul(makeOneHotVector(i,n), np.transpose(makeOneHotVector(j,n)))
    pro3 = np.matmul(pro1, np.transpose(pro2))
    return pro3
 

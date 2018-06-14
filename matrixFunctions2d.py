@@ -140,8 +140,8 @@ def printDetailedBalanceftxt(matrix, fname, additionalComments=''):
 #      f[i] = f[i-1] - 0.6 * np.real(sp.log(f[i]))
    j=-2
    miin = np.min(f)
-   ftxt.write("#Adjusted by min of: %s"%miin)
-   ftxt.write("#%s"%additionalComments)
+   ftxt.write("#Adjusted by min of: %s\n"%miin)
+   ftxt.write("#%s\n"%additionalComments)
    if(miin<0):
       f += miin
    else:

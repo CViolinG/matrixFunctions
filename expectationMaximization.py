@@ -16,13 +16,18 @@ diag = matrixFunctions2d.diagonalAdjustment2d(logd)
 #matrixFunctions2d.print2dMatrix(diag)
 #print
 #print
-epsilon = 0.000000000001
+epsilon = 0.0001
 i=0
 exit = 0
+maxIters = 200
 while(exit==0):
    diag, dist, exit = EMHelper.nextTimeStep(diag, epsilon)
    i+=1
    print i, dist
+   if(i==maxIters):
+      print "Maximum Iterations Reached: %s"%i
+      print "Exiting"
+      exit=1
 #   print
 #   matrixFunctions2d.print2dMatrix(diag)
 #   print
