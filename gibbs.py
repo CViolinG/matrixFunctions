@@ -82,7 +82,7 @@ while(nGibbs>0):
             N[i,j] = val
          Q[i,j] = gammaFunction(N[i,i], N[i,j], alpha[i,j])#Use Samples to make new Q
    for i in range(n):
-      Q[i,i] = np.sum(Q[i,:]) - Q[i,i] 
+      Q[i,i] = -1.0 * (np.sum(Q[i,:]) - Q[i,i] )
    #repeat
 
 
