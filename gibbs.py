@@ -90,7 +90,7 @@ while(nGibbs>0):
 
 
    matrixFunctions2d.write2dMatrix(N, "gibbs_matrix_%s_%s.dat"%(sys.argv[1], totalIters-nGibbs))
-   matrixFunctions2d.printDetailedBalanceftxt(N, "gibbs_db_%s_%s.dat"%(sys.argv[1], totalIters-nGibbs), "Number of Iterations : %s\n"%sys.argv[2])
+   matrixFunctions2d.printDetailedBalanceftxt(N, "gibbs_db_%s_%s.dat"%(sys.argv[1], totalIters-nGibbs), "#Number of Iterations : %s"%sys.argv[2])
 #   counts = metropolis.countSamples(samples, n)
 #   metropolis.printCounts(fname, totalCount, accepted, n, counts, xval)
    

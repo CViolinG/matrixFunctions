@@ -119,7 +119,7 @@ def printDetailedBalanceftxt(matrix, fname, additionalComments=''):
    n = matrix.shape[0]
    i=1
    kb = 0.00198
-   t = 300
+   t = 298 
    kbt = kb * t
    while(os.path.isfile(fname2)):
       fname2 = fname + "." + str(i)
@@ -143,9 +143,9 @@ def printDetailedBalanceftxt(matrix, fname, additionalComments=''):
    ftxt.write("#Adjusted by min of: %s\n"%miin)
    ftxt.write("#%s\n"%additionalComments)
    if(miin<0):
-      f += miin
-   else:
       f -= miin
+   else:
+      f += miin
    for i in range(n-1):
       j+=4.0/n
       ftxt.write("%23s %23s\n"%(j,f[i]))
