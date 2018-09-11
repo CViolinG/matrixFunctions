@@ -23,4 +23,5 @@ for i in range(len(sys.argv)-1):
 
   rmsd = np.sqrt(diff/n)
 
-  print sys.argv[i+1], "rmsd: ",rmsd
+#  print sys.argv[i+1], "rmsd: ",rmsd
+print("%-10s  "%rmsd),

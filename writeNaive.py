@@ -10,15 +10,13 @@ kb = 0.001987191683
 t = 298 
 kbt = kb * t
 j=-2
-diag = np.zeros(n)
+FE = np.zeros(n)
 print "\"Naive : %s\""%sys.argv[1]
 sumd = 0
-for i in range(n):
-   sumd += matrix[i,i]
-matrix = matrix/sumd
 for i in range(n-1):
-   j+=4.0/24
-   diag[i] = -kbt * np.log(matrix[i,i])
-   print j,  diag[i]
+   j+=4.0/n
+   sumd = np.sum(matrix[i,:])
+   FE[i] = -kbt * np.log(sumd)
+   print j,  FE[i]
 
 

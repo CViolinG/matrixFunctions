@@ -16,6 +16,8 @@ def normalize2dMatrix(matrix, k=0): #if k = 1, normalize along rows instead of c
             sum[i] += Norm[i,j] #rows
 #divide by sum
    for i in range(n):
+      if(sum[i]==0):
+         sum[i] = 1
       for j in range(n):
          if(k==0):
             Norm[i,j] = Norm[i,j] / sum[i]
@@ -109,16 +111,39 @@ def print2dMatrix(matrix):
    n = matrix.shape[0]
    for i in range(n):
       for j in range(n):
-         print "%8s " %matrix[i,j],
+         print "%-8s " %matrix[i,j],
       print "\n",
 
 
+def writeDetailedBalanceftxt(matrix, additionalComments=''):
+   n = matrix.shape[0]
+   i=1
+   kb = 0.001987191683
+   t = 298
+   kbt = kb * t
+   f = np.zeros(n)
+   for i in range(n-1):
+      if(matrix[i+1,i] == 0 or matrix[i,i+1]==0):
+         f[i] = 0
+      else:
+         f[i] += f[i-1] + kbt * np.log(abs(matrix[i+1,i] / matrix[i,i+1]))
+   j=-2
+   miin = np.min(f)
+   print("#Adjusted by min of: %s\n"%miin)
+   print("#%s\n"%additionalComments)
+   if(miin<0):
+      f -= miin
+   else:
+      f += miin
+   for i in range(n-1):
+      j+=4.0/n
+      print("%23s %23s"%(j,f[i]))
 
 def printDetailedBalanceftxt(matrix, fname, additionalComments=''):
    fname2 = fname
    n = matrix.shape[0]
    i=1
-   kb = 0.00198
+   kb = 0.001987191683
    t = 298 
    kbt = kb * t
    while(os.path.isfile(fname2)):

@@ -17,7 +17,7 @@ for i in range(n):
    sumd += matrix[i,i]
 matrix = matrix/sumd
 for i in range(n-1):
-   j+=4.0/24
+   j+=4.0/n
    diag[i] = -kbt * np.log(matrix[i,i])
    print j,  diag[i]
 
