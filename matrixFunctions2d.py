@@ -64,9 +64,9 @@ def diagonalAdjustment2d(matrix, k=0):
    for i in range(n):
       matrix[i,i] = 0
       if(k==0):
-         sum[i] = np.sum(matrix[:,i])
+          sum[i] = np.sum(matrix[:,i])
       else:
-         sum[i] = np.sum(matrix[i,:])
+          sum[i] = np.sum(matrix[i,:])
       matrix[i,i] = -1 * sum[i]
 
    return matrix
@@ -88,21 +88,21 @@ def weightedAdjustment2d(matrix, k=0):
    for i in range(n):
       for j in range(n):
          if(k==0):#column wise
-            justSums[i] += matrix[i,j]
-            absSums[i] += abs(matrix[i,j])
-         if(k==1):#row wise
             justSums[i] += matrix[j,i]
             absSums[i] += abs(matrix[j,i])
+         if(k==1):#row wise
+            justSums[i] += matrix[i,j]
+            absSums[i] += abs(matrix[i,j])
 
    for i in range(n):
       justSums[i] = justSums[i] / absSums[i] #multiplication factor created
-
+   matrix2 = np.copy(matrix)
    for i in range(n):
       for j in range(n):
          if(k==0):
-            matrix[i,j] = matrix[i,j] - abs(matrix[i,j]) * justSums[i]#columns
+            matrix[i,j] = matrix2[i,j] - abs(matrix2[i,j]) * justSums[j]#columns
          if(k==1):
-            matrix[i,j] = matrix[i,j] - abs(matrix[i,j]) * justSums[j]#rows
+            matrix[i,j] = matrix2[i,j] - abs(matrix2[i,j]) * justSums[i]#rows
    return matrix
    
 
@@ -175,7 +175,7 @@ def printDetailedBalanceftxt(matrix, fname, additionalComments=''):
       j+=4.0/n
       ftxt.write("%23s %23s\n"%(j,f[i]))
    ftxt.close()
-   return fname2
+   return f
 
 
 def write2dMatrix(matrix, fname):

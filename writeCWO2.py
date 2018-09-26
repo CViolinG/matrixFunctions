@@ -19,7 +19,6 @@ def distance(q1, q2):#find the distance between the two matrices
       for j in range(n):
 #         print i, j, q1[i,j], q2[i,j]
           dist += (q1[i,j] - q2[i,j])**2
-   print dist
    return np.sqrt(dist)
 
 def evaluateHops(hops, i, j, Q):
@@ -87,30 +86,36 @@ P = np.copy(mat) #initial Probability Matrix
 mat = logm(mat)
 Q = matrixFunctions2d.diagonalAdjustment2d(mat, 0)    #this is our Qnaught
 #Q = matrixFunctions2d.weightedAdjustment2d(log)
-def func(x, i, j, Q, P):#x is exp(Q(q_{i,j}))
-#   P = expm(Q)
-   Q_e = expm(Q)
-   n = Q.shape[0]
-   copy = np.copy(Q)
-   #diff = np.real(Q[i,j] - x)#initially zero for first iteration, should change as x changes
-   diff = np.real(Q_e[i,j] - P[i,j])#initially zero for first iteration, should change as x changes
-   for k in range(n):
-      for u in range(n):
-         if(u!=j):
-             copy[i,u] += float(diff/n)
-      copy[i,i] = -1 * (np.sum(copy[i,:]) - copy[i,i]) #set diagonal to neg sum
-   return distance(copy, P) 
+
+
+def func(x,i,j,Q,P):
+#    print i,j,x
+    Q[i,i] += x - Q[i,j]
+    Q[i,j] = x
+    return distance(expm(Q), P)
+
 
 n = Q.shape[0]
 q = np.copy(Q) 
 for i in range(n):
    for j in range(n):
       if(i!=j):
-         calculations+=1
-         print calculations
-         q[i,j] = optimize.fmin(func, Q[i,j], args=(i,j,Q,P), maxiter=200)#argmin(i, j, Q, c)
-         Q = np.copy(q) #put updated matrix in place of Q
-   quit()
+         if(Q[i,j]>1e-10):
+           calculations+=1
+           print calculations
+           x = optimize.fmin(func, Q[i,j], args=(i,j,Q,P), maxiter=200)[0]#argmin(i, j, Q, c)
+
+           #print "UGH:", Q[i,j],x
+         #Q = np.copy(q) #put updated matrix in place of Q
+#           Q[i,i] +=x
+#           Q[i,i] -= Q[i,j]
+           Q[i,j] = x
+#   print "Original:\n", Q[i,:], "\nUpdated:\n", q[i,:]
+#   if(Q[i,i]!=q[i,i]):
+#       quit()
+#   quit()
+#   Q[i,j] = q[i,j] #put updated matrix in place of Q
+#   Q[i,:] = q[i,:]
 matrixFunctions2d.write2dMatrix(Q, sys.argv[2])
 matrixFunctions2d.writeDetailedBalanceftxt(Q)
 

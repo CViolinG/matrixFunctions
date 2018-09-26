@@ -18,8 +18,7 @@ def distance(q1, q2):#find the distance between the two matrices
    for i in range(n):
       for j in range(n):
 #         print i, j, q1[i,j], q2[i,j]
-          dist += (q1[i,j] - q2[i,j])**2
-   print dist
+         dist += (q1[i,j] - q2[i,j])**2
    return np.sqrt(dist)
 
 def evaluateHops(hops, i, j, Q):
@@ -82,35 +81,35 @@ def argmin(i, j, Q, c, epsilon = 0.000000001, maxIters=50):
    return hops[index] 
 
 mat = matrixFunctions2d.read2dMatrix(sys.argv[1])
-mat = matrixFunctions2d.normalize2dMatrix(mat, 0)
-P = np.copy(mat) #initial Probability Matrix
-mat = logm(mat)
-Q = matrixFunctions2d.diagonalAdjustment2d(mat, 0)    #this is our Qnaught
+norm = matrixFunctions2d.normalize2dMatrix(mat, 1)#along row
+log = logm(norm)
+Q = matrixFunctions2d.diagonalAdjustment2d(log)    #this is our Qnaught
 #Q = matrixFunctions2d.weightedAdjustment2d(log)
-def func(x, i, j, Q, P):#x is exp(Q(q_{i,j}))
-#   P = expm(Q)
-   Q_e = expm(Q)
+def func(x, i, j, Q):
+   P = expm(Q)
    n = Q.shape[0]
    copy = np.copy(Q)
-   #diff = np.real(Q[i,j] - x)#initially zero for first iteration, should change as x changes
-   diff = np.real(Q_e[i,j] - P[i,j])#initially zero for first iteration, should change as x changes
    for k in range(n):
+      diff = np.real(Q[i,j] - x)#initially zero for first iteration, should change as x changes
       for u in range(n):
          if(u!=j):
              copy[i,u] += float(diff/n)
-      copy[i,i] = -1 * (np.sum(copy[i,:]) - copy[i,i]) #set diagonal to neg sum
-   return distance(copy, P) 
 
-n = Q.shape[0]
+      copy[i,i] = -1 * (np.sum(copy[i,:]) - copy[i,i]) #set diagonal to neg sum
+   return distance(copy, Q) 
+
+n = norm.shape[0]
 q = np.copy(Q) 
 for i in range(n):
    for j in range(n):
       if(i!=j):
          calculations+=1
-         print calculations
-         q[i,j] = optimize.fmin(func, Q[i,j], args=(i,j,Q,P), maxiter=200)#argmin(i, j, Q, c)
+#         print calculations
+         q[i,j] = optimize.fmin(func, Q[i,j], args=(i,j,Q))#argmin(i, j, Q, c)
+#         print q[i,j]
          Q = np.copy(q) #put updated matrix in place of Q
-   quit()
-matrixFunctions2d.write2dMatrix(Q, sys.argv[2])
-matrixFunctions2d.writeDetailedBalanceftxt(Q)
+
+
+matrixFunctions2d.write2dMatrix(np.transpose(Q), sys.argv[2])
+matrixFunctions2d.writeDetailedBalanceftxt(np.transpose(Q))
 

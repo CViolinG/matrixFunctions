@@ -6,7 +6,7 @@ from scipy.linalg import expm, logm
 
 matrix =matrixFunctions2d.read2dMatrix(sys.argv[1])
 
-Norm = matrixFunctions2d.normalize2dMatrix(matrix, 0)
+Norm = matrixFunctions2d.normalize2dMatrix(matrix, 1)
 logd = logm(Norm)
 
 
